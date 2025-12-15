@@ -15,3 +15,11 @@ target_compile_options(physics_playground PRIVATE
     -Wextra
     -Wpedantic
 )
+
+find_package(SFML 3 COMPONENTS System Window Graphics REQUIRED)
+
+target_link_libraries(physics_playground PRIVATE
+    SFML::System
+    SFML::Window
+    SFML::Graphics
+)
