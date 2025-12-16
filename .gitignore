@@ -1,4 +1,3 @@
-cat > .gitignore << 'EOF'
 # Build directories
 build/
 cmake-build-*/
@@ -7,7 +6,6 @@ cmake-build-*/
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
-Makefile
 
 # Compiled binaries
 *.o
@@ -27,4 +25,3 @@ Makefile
 # OS files
 .DS_Store
 Thumbs.db
-EOF
