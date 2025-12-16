@@ -17,6 +17,7 @@ add_executable(physics_playground
     src/main.cpp
     src/core/EventHandler.cpp
     src/entities/Mass.cpp
+    src/scene/Gravity.cpp
 )
 
 target_compile_options(physics_playground PRIVATE
