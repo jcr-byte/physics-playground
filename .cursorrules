@@ -38,7 +38,7 @@ rules:
   - AI may assist with:
       - Debugging help (compiler errors, runtime issues)
       - Documentation writing (README, learning outcomes, comments)
-      - Build system files (CMake, SFML setup) *after the developer attempts first*
+      - Build system files (CMake, SFML setup)
       - Minor utilities not central to the project
       - High-level brainstorming of visual effects or scene ideas
 

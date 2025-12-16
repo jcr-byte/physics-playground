@@ -8,6 +8,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(physics_playground
     src/main.cpp
+    src/core/EventHandler.cpp
+    src/entities/Mass.cpp
 )
 
 target_compile_options(physics_playground PRIVATE
