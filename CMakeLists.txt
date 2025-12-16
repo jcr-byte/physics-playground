@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
 
+# Support vcpkg for package management (optional - set CMAKE_TOOLCHAIN_FILE if vcpkg is installed elsewhere)
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    if(EXISTS "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+        set(CMAKE_TOOLCHAIN_FILE "C:/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "vcpkg toolchain file" FORCE)
+    endif()
+endif()
+
 project(physics_playground LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -13,9 +20,8 @@ add_executable(physics_playground
 )
 
 target_compile_options(physics_playground PRIVATE
-    -Wall
-    -Wextra
-    -Wpedantic
+    $<$<CXX_COMPILER_ID:MSVC>:/W4>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic>
 )
 
 find_package(SFML 3 COMPONENTS System Window Graphics REQUIRED)

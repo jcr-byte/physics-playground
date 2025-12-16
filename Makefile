@@ -1,11 +1,14 @@
 .PHONY: build run clean
 
+# Detect cmake path (works on Windows)
+CMAKE := $(shell where cmake 2>nul || echo cmake)
+
 build:
-	cmake -B build
-	cmake --build build
+	$(CMAKE) -B build
+	$(CMAKE) --build build
 
 run: build
-	./build/physics_playground
+	.\build\Debug\physics_playground.exe
 
 clean:
-	rm -rf build
+	if exist build rmdir /s /q build
