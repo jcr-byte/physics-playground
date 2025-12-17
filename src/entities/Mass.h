@@ -13,6 +13,9 @@ private:
 public:
     Mass(sf::Vector2f position, float mass, float radius);
     void draw(sf::RenderWindow& window);
+    void update(float deltaTime);
+    void applyForce(sf::Vector2f force);
+    float getMass();
 };
 
 #endif

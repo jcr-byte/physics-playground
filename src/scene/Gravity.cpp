@@ -15,7 +15,9 @@ void sceneOne() {
 
     EventHandler eventHandler;
 
-    Mass mainMass(sf::Vector2f(0, 0), 3, 20);
+    // logic for setting up mass 1
+    Mass mainMass(sf::Vector2f(400, 100), 1, 5);
+    sf::Vector2f gravityForce(0.0f, mainMass.getMass() * 100);
 
     // logic for fps text display
     sf::Font font;
@@ -55,6 +57,10 @@ void sceneOne() {
 
         window.draw(fpsText);
         window.draw(ground);
+
+        mainMass.draw(window);
+        mainMass.applyForce(gravityForce);
+        mainMass.update(frameTime);
 
         window.display();
     }
