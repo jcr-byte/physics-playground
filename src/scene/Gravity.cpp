@@ -19,16 +19,16 @@ void sceneOne() {
     Mass mainMass(sf::Vector2f(400, 100), 1, 5);
     sf::Vector2f gravityForce(0.0f, mainMass.getMass() * 100);
 
-    // logic for fps text display
-    sf::Font font;
-    if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
-        throw std::runtime_error("Failed to load font");
-    }
-    sf::Text fpsText(font, "FPS: --");
-    fpsText.setFont(font);
-    fpsText.setCharacterSize(24);
-    fpsText.setFillColor(sf::Color::White);
-    fpsText.setPosition(sf::Vector2f(10, 10));
+    // // logic for fps text display
+    // sf::Font font;
+    // if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+    //     throw std::runtime_error("Failed to load font");
+    // }
+    // sf::Text fpsText(font, "FPS: --");
+    // fpsText.setFont(font);
+    // fpsText.setCharacterSize(24);
+    // fpsText.setFillColor(sf::Color::White);
+    // fpsText.setPosition(sf::Vector2f(10, 10));
 
     // logic for calculating fps
     sf::Clock frameClock;
@@ -42,7 +42,7 @@ void sceneOne() {
             window.close();
         }
 
-        // logic for displaying fps
+        // // logic for displaying fps
         frameTime = frameClock.restart().asSeconds();
         fps = 1.0f / frameTime;
         fpsUpdateTimer += frameTime;
@@ -50,12 +50,11 @@ void sceneOne() {
         if (fpsUpdateTimer >= FPS_UPDATE_TIME) {
             std::stringstream ss;
             ss << "FPS: " << std::fixed << std::setprecision(1) << fps;
-            fpsText.setString(ss.str());
+            // fpsText.setString(ss.str());
             fpsUpdateTimer = 0.0f;
         }
         window.clear();
 
-        window.draw(fpsText);
         window.draw(ground);
 
         mainMass.draw(window);

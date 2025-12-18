@@ -2,8 +2,8 @@
 #define GRAVITY_H
 
 #include <SFML/Graphics.hpp>
-#include "core/EventHandler.h"
-#include "entities/Mass.h"
+#include "../core/EventHandler.h"
+#include "../entities/Mass.h"
 
 void sceneOne();
 
