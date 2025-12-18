@@ -1,7 +1,7 @@
 #include "Mass.h"
 #include <SFML/Graphics.hpp>
 
-Mass::Mass(sf::Vector2f position, float mass, float radius) : position(position), mass(mass) {
+Mass::Mass(sf::Vector2f position, float mass, float radius) : position(position), mass(mass), radius(radius) {
     shape.setRadius(radius);
     shape.setOrigin(sf::Vector2f(shape.getRadius(), shape.getRadius()));
     shape.setFillColor(sf::Color::White);
@@ -25,4 +25,17 @@ void Mass::applyForce(sf::Vector2f force) {
 
 float Mass::getMass() {
     return mass;
+}
+
+bool Mass::checkGroundCollision(float groundPosition) {
+    if (position.y + radius >= groundPosition) return true;
+    return false;
+}
+
+void Mass::handleGroundCollision(float groundPosition, float restitution) {
+    bool isCollision = checkGroundCollision(groundPosition);
+    if (isCollision) {
+        position.y = groundPosition - radius;
+        velocity.y = -1 * velocity.y * restitution;
+    }
 }

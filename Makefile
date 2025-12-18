@@ -20,7 +20,7 @@ build:
 	$(CMAKE) --build build --parallel
 
 run: build
-	./build/$(EXE)
+	./build/Debug/$(EXE)
 
 clean:
 	$(RM)

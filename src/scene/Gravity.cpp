@@ -60,6 +60,7 @@ void sceneOne() {
         mainMass.draw(window);
         mainMass.applyForce(gravityForce);
         mainMass.update(frameTime);
+        mainMass.handleGroundCollision(ground[0].position.y, 0.8);
 
         window.display();
     }
