@@ -18,6 +18,7 @@ add_executable(physics_playground
     src/core/EventHandler.cpp
     src/entities/Mass.cpp
     src/scene/Gravity.cpp
+    $<$<PLATFORM_ID:Windows>:assets/resources.rc>
 )
 
 target_compile_options(physics_playground PRIVATE
@@ -25,6 +26,8 @@ target_compile_options(physics_playground PRIVATE
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic>
 )
 
+# Enable static linking for clean distribution
+set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML 3 COMPONENTS System Window Graphics REQUIRED)
 
 target_link_libraries(physics_playground PRIVATE
@@ -32,3 +35,14 @@ target_link_libraries(physics_playground PRIVATE
     SFML::Window
     SFML::Graphics
 )
+
+# For Windows static builds
+if(WIN32)
+    target_link_libraries(physics_playground PRIVATE 
+        opengl32
+        winmm
+        gdi32
+        ws2_32
+    )
+    target_link_options(physics_playground PRIVATE /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup)
+endif()

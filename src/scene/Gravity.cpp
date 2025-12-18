@@ -11,7 +11,11 @@ void sceneOne() {
     ground[0].color = sf::Color::White;
     ground[1].color = sf::Color::White;
 
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML Window");
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "Physics Playground");
+    sf::Image icon;
+    if (icon.loadFromFile("assets/icons/icon.png")) {
+        window.setIcon(icon.getSize(), icon.getPixelsPtr());
+    }
 
     EventHandler eventHandler;
 
