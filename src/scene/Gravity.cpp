@@ -19,6 +19,11 @@ void sceneOne() {
 
     EventHandler eventHandler;
 
+    sf::View camera;
+    camera.setSize(sf::Vector2f(800.f, 600.f));
+    camera.setCenter(sf::Vector2f(400.f, 300.f));
+    window.setView(camera);
+
     // logic for setting up mass 1
     Mass mainMass(sf::Vector2f(400, 100), 1, 5);
     sf::Vector2f gravityForce(0.0f, mainMass.getMass() * 100);

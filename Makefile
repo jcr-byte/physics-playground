@@ -18,7 +18,7 @@
 ifeq ($(OS),Windows_NT)
     # Windows configuration
     EXE := physics_playground.exe              # Executable name with .exe extension
-    PATHSEP := \\                              # Windows path separator (escaped backslash)
+    PATHSEP := /
     RM_BUILD := if exist build rmdir /s /q build 2>nul || rem  # Remove build dir quietly
     RM_DIST := if exist dist rmdir /s /q dist 2>nul || rem     # Remove dist dir quietly
     MKDIR_BUILD := if not exist build mkdir build             # Create build dir if needed
@@ -80,7 +80,7 @@ release:
 # Build (if needed) and run the executable in Debug mode
 # Fails naturally if executable doesn't exist or build fails
 run: build
-	build$(PATHSEP)$(BUILD_TYPE)$(PATHSEP)$(EXE)
+	"build$(PATHSEP)$(BUILD_TYPE)$(PATHSEP)$(EXE)"
 
 # Build and run the executable in Release mode
 # Delegates to run target with BUILD_TYPE=Release

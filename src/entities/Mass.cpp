@@ -27,6 +27,10 @@ float Mass::getMass() {
     return mass;
 }
 
+sf::Vector2f Mass::getPosition() {
+    return position;
+}
+
 bool Mass::checkGroundCollision(float groundPosition) {
     if (position.y + radius >= groundPosition) return true;
     return false;
