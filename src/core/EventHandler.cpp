@@ -1,8 +1,11 @@
 #include "EventHandler.h"
+#include <imgui-SFML.h>
 
 bool EventHandler::processEvents(sf::RenderWindow& window) {
     while (const std::optional event = window.pollEvent())
     {
+        ImGui::SFML::ProcessEvent(window, *event);
+
         if (event->is<sf::Event::Closed>()) {
             return true;
         }

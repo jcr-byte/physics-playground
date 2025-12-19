@@ -30,10 +30,15 @@ target_compile_options(physics_playground PRIVATE
 set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML 3 COMPONENTS System Window Graphics REQUIRED)
 
+find_package(imgui CONFIG REQUIRED)
+find_package(ImGui-SFML CONFIG REQUIRED)
+
 target_link_libraries(physics_playground PRIVATE
     SFML::System
     SFML::Window
     SFML::Graphics
+    imgui::imgui
+    ImGui-SFML::ImGui-SFML
 )
 
 # For Windows static builds
