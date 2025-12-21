@@ -27,6 +27,10 @@ float Mass::getMass() {
     return mass;
 }
 
+void Mass::setMass(float newMass) {
+    mass = newMass;
+}
+
 sf::Vector2f Mass::getPosition() {
     return position;
 }

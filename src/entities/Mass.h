@@ -17,6 +17,7 @@ public:
     void update(float deltaTime);
     void applyForce(sf::Vector2f force);
     float getMass();
+    void setMass(float newMass);
     sf::Vector2f getPosition();
     bool checkGroundCollision(float groundPosition);
     void handleGroundCollision(float groundPosition, float restitution);

@@ -22,6 +22,13 @@ void sceneOne() {
         return;
     }
 
+    // load font
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontDefault();
+    ImFont* headerOneFont = io.Fonts->AddFontFromFileTTF("assets/fonts/CONSOLAB.ttf", 20.0f);
+    ImFont* headerTwoFont = io.Fonts->AddFontFromFileTTF("assets/fonts/CONSOLA.ttf", 18.0f);
+    ImGui::SFML::UpdateFontTexture();
+
     // inits camera
     sf::View camera;
     camera.setSize(sf::Vector2f(1600.0f, 900.0f));
@@ -48,6 +55,9 @@ void sceneOne() {
     // logic for calculating fps
     sf::Clock frameClock;
     float frameTime = 0.0f;
+
+    // sidebar variables
+    int sidebarMode = 0;
 
 
 
@@ -77,8 +87,41 @@ void sceneOne() {
                                         ImGuiWindowFlags_NoTitleBar |
                                         ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-        if (ImGui::Begin("Telemetry", nullptr, sidebarFlags)) {
-            ImGui::Text("Kinematics");
+        if (ImGui::Begin("Sidebar", nullptr, sidebarFlags)) {
+            if (sidebarMode == 0) {
+                ImGui::PushFont(headerOneFont);
+                ImGui::Text("Telemetry");
+                ImGui::PopFont();
+            }
+            if (sidebarMode == 1) {
+
+                ImGui::PushFont(headerOneFont);
+                ImGui::Text("Settings");
+                ImGui::PopFont();
+
+                static float gravity = 9.8f;
+                static float airResistance = 1.0f;
+                static float height = 10.0f;
+                static float groundRestitution = 0.1f;
+                if (ImGui::CollapsingHeader("Environment")) {
+                    ImGui::SetNextItemWidth(80.0f);
+                    ImGui::DragFloat("Gravity (m/s_2)", &gravity, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::DragFloat("Air Resistance (m/s_2)", &airResistance, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::DragFloat("Ground Restitution", &groundRestitution, 0.01f, 0.0f, 20.0f, "%.2f");
+                }
+                static float mass = 1.0f;
+                static float radius = 5.0f;
+                static float massRestitution = 0.4f;
+                if (ImGui::CollapsingHeader("Object Properties")) {
+                    ImGui::SetNextItemWidth(80.0f);
+                    ImGui::DragFloat("Mass (g)", &mass, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::DragFloat("Radius (m)", &radius, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::DragFloat("Mass Restitution", &massRestitution, 0.01f, 0.0f, 20.0f, "%.2f");
+                }
+                if (ImGui::CollapsingHeader("Visualization")) {
+                }
+            }
         }
 
         ImGui::End();
@@ -97,8 +140,12 @@ void sceneOne() {
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
 
         if (ImGui::Begin("SidebarTabs", nullptr, tabFlags)) {
-            if (ImGui::Button("T", ImVec2(tabWidth, 40))) {}
-            if (ImGui::Button("S", ImVec2(tabWidth, 40))) {}
+            if (ImGui::Button("T", ImVec2(tabWidth, 40))) {
+                sidebarMode = 0;
+            }
+            if (ImGui::Button("S", ImVec2(tabWidth, 40))) {
+                sidebarMode = 1;
+            }
 
             ImGui::End();
         }
