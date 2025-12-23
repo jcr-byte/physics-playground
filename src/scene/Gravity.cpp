@@ -36,15 +36,31 @@ void sceneOne() {
     window.setView(camera);
 
     // global sizing variables
+    float toolbarWidth = 100.0f;
+    float toolbarHeight = 50.0f;
+    float toolbarButtonsPos = 0.0f;
     float sidebarWidth = 250.0f;
     float sidebarPos = static_cast<float>(window.getSize().x) - sidebarWidth;
     float tabWidth = 40.0f;
     float screenWidth = static_cast<float>(window.getSize().x);
     float screenHeight = static_cast<float>(window.getSize().y);
     float sceneWidth = screenWidth - sidebarWidth;
+    float groundY = 800.0f;
+
+    // global initial variables
+    static float gravity = 9.8f;
+    static float airResistance = 1.0f;
+    static float height = 10.0f;
+    static float groundRestitution = 0.1f;
+    static float mass = 1.0f;
+    static float radius = 5.0f;
+    static float massRestitution = 0.4f;
+
+    float pixelsPerMeter = 50.0f;
+    
 
     // logic for setting up mass 1
-    Mass mainMass(sf::Vector2f(sceneWidth / 2, screenHeight / 2), 1, 5);
+    Mass mainMass(sf::Vector2f(sceneWidth / 2, groundY - (height * pixelsPerMeter)), 1, 5);
     sf::Vector2f gravityForce(0.0f, mainMass.getMass() * 100);
 
     // creates ground
@@ -55,6 +71,9 @@ void sceneOne() {
     // logic for calculating fps
     sf::Clock frameClock;
     float frameTime = 0.0f;
+
+    // toolbar variables
+    bool isPaused = true;
 
     // sidebar variables
     int sidebarMode = 0;
@@ -71,6 +90,41 @@ void sceneOne() {
         ImGui::SFML::Update(window, dt);
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+        ImGui::SetNextWindowSize(ImVec2(toolbarWidth, toolbarHeight));
+
+        ImGuiWindowFlags toolbarFlags = ImGuiWindowFlags_NoDecoration | 
+                                        ImGuiWindowFlags_NoMove | 
+                                        ImGuiWindowFlags_NoResize | 
+                                        ImGuiWindowFlags_NoSavedSettings |
+                                        ImGuiWindowFlags_AlwaysAutoResize;
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 20.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
+
+        if (ImGui::Begin("Toolbar", nullptr, toolbarFlags)) {
+            if (ImGui::Button("Play", ImVec2(tabWidth, 40))) {
+                if (isPaused) {
+                    isPaused = false;
+                } else {
+                    isPaused = true;
+                }
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset", ImVec2(tabWidth, 40))) {
+                
+            }
+
+            ImGui::End();
+        }
+
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar(3);
+        
 
         // setup sidebar ui
         ImVec2 windowPos = ImVec2(
@@ -99,20 +153,16 @@ void sceneOne() {
                 ImGui::Text("Settings");
                 ImGui::PopFont();
 
-                static float gravity = 9.8f;
-                static float airResistance = 1.0f;
-                static float height = 10.0f;
-                static float groundRestitution = 0.1f;
                 if (ImGui::CollapsingHeader("Environment")) {
                     ImGui::SetNextItemWidth(80.0f);
                     ImGui::DragFloat("Gravity (m/s_2)", &gravity, 0.01f, 0.0f, 20.0f, "%.2f");
                     ImGui::DragFloat("Air Resistance (m/s_2)", &airResistance, 0.01f, 0.0f, 20.0f, "%.2f");
-                    ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f");
+                     if (ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        float pixelHeight = groundY - (height * pixelsPerMeter);
+                        mainMass.setHeight(pixelHeight);
+                     }
                     ImGui::DragFloat("Ground Restitution", &groundRestitution, 0.01f, 0.0f, 20.0f, "%.2f");
                 }
-                static float mass = 1.0f;
-                static float radius = 5.0f;
-                static float massRestitution = 0.4f;
                 if (ImGui::CollapsingHeader("Object Properties")) {
                     ImGui::SetNextItemWidth(80.0f);
                     ImGui::DragFloat("Mass (g)", &mass, 0.01f, 0.0f, 20.0f, "%.2f");
@@ -152,14 +202,13 @@ void sceneOne() {
 
         ImGui::PopStyleColor();
         ImGui::PopStyleVar();
-        
-        float groundY = 800.0f;
 
         ground[0].position = sf::Vector2f(0.f, groundY);
         ground[1].position = sf::Vector2f(sceneWidth, groundY);
 
         window.clear();
         window.draw(ground);
+
         mainMass.draw(window);
         mainMass.applyForce(gravityForce);
         mainMass.update(frameTime);

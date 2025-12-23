@@ -31,6 +31,14 @@ void Mass::setMass(float newMass) {
     mass = newMass;
 }
 
+void Mass::setHeight(float newHeight) {
+    position.y = newHeight;
+}
+
+float Mass::getHeight() {
+    return position.y;
+}
+
 sf::Vector2f Mass::getPosition() {
     return position;
 }
