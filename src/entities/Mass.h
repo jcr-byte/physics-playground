@@ -18,8 +18,10 @@ public:
     void applyForce(sf::Vector2f force);
     float getMass();
     void setMass(float newMass);
-    void setHeight(float newHeight);
     float getHeight();
+    void setHeight(float newHeight);
+    sf::Vector2f getVelocity();
+    void setVelocity(sf::Vector2f newVelocity);
     sf::Vector2f getPosition();
     bool checkGroundCollision(float groundPosition);
     void handleGroundCollision(float groundPosition, float restitution);

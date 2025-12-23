@@ -31,12 +31,20 @@ void Mass::setMass(float newMass) {
     mass = newMass;
 }
 
+float Mass::getHeight() {
+    return position.y;
+}
+
 void Mass::setHeight(float newHeight) {
     position.y = newHeight;
 }
 
-float Mass::getHeight() {
-    return position.y;
+sf::Vector2f Mass::getVelocity() {
+    return velocity;
+}
+
+void Mass::setVelocity(sf::Vector2f newVelocity) {
+    velocity = newVelocity;
 }
 
 sf::Vector2f Mass::getPosition() {

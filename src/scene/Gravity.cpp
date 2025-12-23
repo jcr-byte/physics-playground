@@ -55,12 +55,12 @@ void sceneOne() {
     static float mass = 1.0f;
     static float radius = 5.0f;
     static float massRestitution = 0.4f;
-
     float pixelsPerMeter = 50.0f;
+    float pixelHeight = groundY - (height * pixelsPerMeter);
     
 
     // logic for setting up mass 1
-    Mass mainMass(sf::Vector2f(sceneWidth / 2, groundY - (height * pixelsPerMeter)), 1, 5);
+    Mass mainMass(sf::Vector2f(sceneWidth / 2,pixelHeight), 1, 5);
     sf::Vector2f gravityForce(0.0f, mainMass.getMass() * 100);
 
     // creates ground
@@ -116,7 +116,8 @@ void sceneOne() {
             ImGui::SameLine();
 
             if (ImGui::Button("Reset", ImVec2(tabWidth, 40))) {
-                
+                mainMass.setHeight(pixelHeight);
+                mainMass.setVelocity(sf::Vector2f(0, 0));
             }
 
             ImGui::End();
@@ -157,10 +158,10 @@ void sceneOne() {
                     ImGui::SetNextItemWidth(80.0f);
                     ImGui::DragFloat("Gravity (m/s_2)", &gravity, 0.01f, 0.0f, 20.0f, "%.2f");
                     ImGui::DragFloat("Air Resistance (m/s_2)", &airResistance, 0.01f, 0.0f, 20.0f, "%.2f");
-                     if (ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f")) {
-                        float pixelHeight = groundY - (height * pixelsPerMeter);
+                    if (ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        pixelHeight = groundY - (height * pixelsPerMeter);
                         mainMass.setHeight(pixelHeight);
-                     }
+                    }
                     ImGui::DragFloat("Ground Restitution", &groundRestitution, 0.01f, 0.0f, 20.0f, "%.2f");
                 }
                 if (ImGui::CollapsingHeader("Object Properties")) {
@@ -210,9 +211,12 @@ void sceneOne() {
         window.draw(ground);
 
         mainMass.draw(window);
-        mainMass.applyForce(gravityForce);
-        mainMass.update(frameTime);
-        mainMass.handleGroundCollision(ground[0].position.y, 0.8);
+
+        if (!isPaused) {
+            mainMass.applyForce(gravityForce);
+            mainMass.update(frameTime);
+            mainMass.handleGroundCollision(ground[0].position.y, 0.8);
+        }
 
         ImGui::SFML::Render(window);
         window.display();
