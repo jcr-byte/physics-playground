@@ -24,7 +24,8 @@ void sceneOne() {
 
     // load font
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->AddFontDefault();
+    ImFont* mainFont = io.Fonts->AddFontFromFileTTF("assets/fonts/CONSOLA.ttf", 12.0f);
+    io.FontDefault = mainFont;
     ImFont* headerOneFont = io.Fonts->AddFontFromFileTTF("assets/fonts/CONSOLAB.ttf", 20.0f);
     ImFont* headerTwoFont = io.Fonts->AddFontFromFileTTF("assets/fonts/CONSOLA.ttf", 18.0f);
     ImGui::SFML::UpdateFontTexture();
@@ -39,8 +40,9 @@ void sceneOne() {
     float toolbarWidth = 100.0f;
     float toolbarHeight = 50.0f;
     float toolbarButtonsPos = 0.0f;
-    float sidebarWidth = 250.0f;
+    float sidebarWidth = 270.0f;
     float sidebarPos = static_cast<float>(window.getSize().x) - sidebarWidth;
+    float sidebarInputFieldWidth = 80.0f;
     float tabWidth = 40.0f;
     float screenWidth = static_cast<float>(window.getSize().x);
     float screenHeight = static_cast<float>(window.getSize().y);
@@ -155,19 +157,24 @@ void sceneOne() {
                 ImGui::PopFont();
 
                 if (ImGui::CollapsingHeader("Environment")) {
-                    ImGui::SetNextItemWidth(80.0f);
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     ImGui::DragFloat("Gravity (m/s_2)", &gravity, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     ImGui::DragFloat("Air Resistance (m/s_2)", &airResistance, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     if (ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f")) {
                         pixelHeight = groundY - (height * pixelsPerMeter);
                         mainMass.setHeight(pixelHeight);
                     }
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     ImGui::DragFloat("Ground Restitution", &groundRestitution, 0.01f, 0.0f, 20.0f, "%.2f");
                 }
                 if (ImGui::CollapsingHeader("Object Properties")) {
-                    ImGui::SetNextItemWidth(80.0f);
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     ImGui::DragFloat("Mass (g)", &mass, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     ImGui::DragFloat("Radius (m)", &radius, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     ImGui::DragFloat("Mass Restitution", &massRestitution, 0.01f, 0.0f, 20.0f, "%.2f");
                 }
                 if (ImGui::CollapsingHeader("Visualization")) {
