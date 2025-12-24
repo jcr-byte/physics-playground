@@ -37,9 +37,10 @@ void sceneOne() {
     window.setView(camera);
 
     // global sizing variables
+
+    // ui component positioning and sizing
     float toolbarWidth = 100.0f;
     float toolbarHeight = 50.0f;
-    float toolbarButtonsPos = 0.0f;
     float sidebarWidth = 270.0f;
     float sidebarPos = static_cast<float>(window.getSize().x) - sidebarWidth;
     float sidebarInputFieldWidth = 80.0f;
@@ -47,23 +48,23 @@ void sceneOne() {
     float screenWidth = static_cast<float>(window.getSize().x);
     float screenHeight = static_cast<float>(window.getSize().y);
     float sceneWidth = screenWidth - sidebarWidth;
-    float groundY = 800.0f;
+    float pixelsPerMeter = 50.0f;
+    float groundYPixels = 800.0f;
+    float groundYMeters = groundYPixels / pixelsPerMeter;
 
     // global initial variables
     static float gravity = 9.8f;
-    static float airResistance = 1.0f;
+    static float airDensity = 1.225f;
     static float height = 10.0f;
-    static float groundRestitution = 0.1f;
-    static float mass = 1.0f;
-    static float radius = 5.0f;
-    static float massRestitution = 0.4f;
-    float pixelsPerMeter = 50.0f;
-    float pixelHeight = groundY - (height * pixelsPerMeter);
+    static float groundRestitution = 0.8f;
+    static float massSize = 1.0f;
+    static float radius = 0.1f;
+    static float massRestitution = 0.8f;
+    float totalRestitution = massRestitution * groundRestitution;
     
-
-    // logic for setting up mass 1
-    Mass mainMass(sf::Vector2f(sceneWidth / 2,pixelHeight), 1, 5);
-    sf::Vector2f gravityForce(0.0f, mainMass.getMass() * 100);
+    // logic for setting up massSize 1
+    Mass mainMass(sf::Vector2f((sceneWidth / 2) / pixelsPerMeter, groundYMeters - height), massSize, radius);
+    sf::Vector2f gravityForce = sf::Vector2f(0.0f, massSize * gravity);
 
     // creates ground
     sf::VertexArray ground(sf::PrimitiveType::Lines, 2);
@@ -79,8 +80,6 @@ void sceneOne() {
 
     // sidebar variables
     int sidebarMode = 0;
-
-
 
     while (window.isOpen()) {
         if (eventHandler.processEvents(window)){
@@ -118,7 +117,8 @@ void sceneOne() {
             ImGui::SameLine();
 
             if (ImGui::Button("Reset", ImVec2(tabWidth, 40))) {
-                mainMass.setHeight(pixelHeight);
+                groundYMeters = groundYPixels / pixelsPerMeter;
+                mainMass.setHeight(groundYMeters - height);
                 mainMass.setVelocity(sf::Vector2f(0, 0));
             }
 
@@ -158,24 +158,35 @@ void sceneOne() {
 
                 if (ImGui::CollapsingHeader("Environment")) {
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    ImGui::DragFloat("Gravity (m/s_2)", &gravity, 0.01f, 0.0f, 20.0f, "%.2f");
-                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    ImGui::DragFloat("Air Resistance (m/s_2)", &airResistance, 0.01f, 0.0f, 20.0f, "%.2f");
-                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    if (ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f")) {
-                        pixelHeight = groundY - (height * pixelsPerMeter);
-                        mainMass.setHeight(pixelHeight);
+                    if (ImGui::DragFloat("Gravity (m/s_2)", &gravity, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        gravityForce.y = gravity * mainMass.getMass();
                     }
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    ImGui::DragFloat("Ground Restitution", &groundRestitution, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::DragFloat("Air Density (m/s_2)", &airDensity, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
+                    if (ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        groundYMeters = groundYPixels / pixelsPerMeter;
+                        mainMass.setHeight(groundYMeters - height);
+                    }
+                    ImGui::SetNextItemWidth(sidebarInputFieldWidth);
+                    if (ImGui::DragFloat("Ground Restitution", &groundRestitution, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        totalRestitution = massRestitution * groundRestitution;
+                    }
                 }
                 if (ImGui::CollapsingHeader("Object Properties")) {
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    ImGui::DragFloat("Mass (g)", &mass, 0.01f, 0.0f, 20.0f, "%.2f");
+                    if (ImGui::DragFloat("Mass (g)", &massSize, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        mainMass.setMass(massSize);
+                        gravityForce.y = gravity * massSize;
+                    }
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    ImGui::DragFloat("Radius (m)", &radius, 0.01f, 0.0f, 20.0f, "%.2f");
+                    if (ImGui::DragFloat("Radius (m)", &radius, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        mainMass.setRadius(radius);
+                    }
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    ImGui::DragFloat("Mass Restitution", &massRestitution, 0.01f, 0.0f, 20.0f, "%.2f");
+                    if (ImGui::DragFloat("Mass Restitution", &massRestitution, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        totalRestitution = massRestitution * groundRestitution;
+                    }
                 }
                 if (ImGui::CollapsingHeader("Visualization")) {
                 }
@@ -211,8 +222,8 @@ void sceneOne() {
         ImGui::PopStyleColor();
         ImGui::PopStyleVar();
 
-        ground[0].position = sf::Vector2f(0.f, groundY);
-        ground[1].position = sf::Vector2f(sceneWidth, groundY);
+        ground[0].position = sf::Vector2f(0.f, groundYPixels);
+        ground[1].position = sf::Vector2f(sceneWidth, groundYPixels);
 
         window.clear();
         window.draw(ground);
@@ -221,8 +232,9 @@ void sceneOne() {
 
         if (!isPaused) {
             mainMass.applyForce(gravityForce);
+            mainMass.applyForce(mainMass.calculateDragForce(airDensity));
             mainMass.update(frameTime);
-            mainMass.handleGroundCollision(ground[0].position.y, 0.8);
+            mainMass.handleGroundCollision(ground[0].position.y / 50.0f, totalRestitution);
         }
 
         ImGui::SFML::Render(window);

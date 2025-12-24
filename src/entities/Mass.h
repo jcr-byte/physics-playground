@@ -23,6 +23,9 @@ public:
     sf::Vector2f getVelocity();
     void setVelocity(sf::Vector2f newVelocity);
     sf::Vector2f getPosition();
+    void setRadius(float newRadius);
+    float getRadius();
+    sf::Vector2f calculateDragForce(float airDensity);
     bool checkGroundCollision(float groundPosition);
     void handleGroundCollision(float groundPosition, float restitution);
 
