@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "../core/EventHandler.h"
 #include "../entities/Mass.h"
+#include "Gravity.h"
 #include <imgui.h>
 #include <imgui-SFML.h>
 
@@ -36,7 +37,8 @@ void sceneOne() {
     camera.setCenter(sf::Vector2f(1600.0f / 2.f, 900.0f / 2.f));
     window.setView(camera);
 
-    // global sizing variables
+    // init environment settings
+    GravitySettings settings;
 
     // ui component positioning and sizing
     float toolbarWidth = 100.0f;
@@ -48,23 +50,18 @@ void sceneOne() {
     float screenWidth = static_cast<float>(window.getSize().x);
     float screenHeight = static_cast<float>(window.getSize().y);
     float sceneWidth = screenWidth - sidebarWidth;
-    float pixelsPerMeter = 50.0f;
     float groundYPixels = 800.0f;
-    float groundYMeters = groundYPixels / pixelsPerMeter;
+    float groundYMeters = groundYPixels / settings.pixelsPerMeter;
 
     // global initial variables
-    static float gravity = 9.8f;
-    static float airDensity = 1.225f;
-    static float height = 10.0f;
-    static float groundRestitution = 0.8f;
     static float massSize = 1.0f;
     static float radius = 0.1f;
     static float massRestitution = 0.8f;
-    float totalRestitution = massRestitution * groundRestitution;
+    float totalRestitution = massRestitution * settings.groundRestitution;
     
     // logic for setting up massSize 1
-    Mass mainMass(sf::Vector2f((sceneWidth / 2) / pixelsPerMeter, groundYMeters - height), massSize, radius);
-    sf::Vector2f gravityForce = sf::Vector2f(0.0f, massSize * gravity);
+    Mass mainMass(sf::Vector2f((sceneWidth / 2) / settings.pixelsPerMeter, groundYMeters - settings.height), massSize, radius);
+    sf::Vector2f gravityForce = sf::Vector2f(0.0f, massSize * settings.gravity);
 
     // creates ground
     sf::VertexArray ground(sf::PrimitiveType::Lines, 2);
@@ -74,12 +71,6 @@ void sceneOne() {
     // logic for calculating fps
     sf::Clock frameClock;
     float frameTime = 0.0f;
-
-    // toolbar variables
-    bool isPaused = true;
-
-    // sidebar variables
-    int sidebarMode = 0;
 
     while (window.isOpen()) {
         if (eventHandler.processEvents(window)){
@@ -107,18 +98,18 @@ void sceneOne() {
 
         if (ImGui::Begin("Toolbar", nullptr, toolbarFlags)) {
             if (ImGui::Button("Play", ImVec2(tabWidth, 40))) {
-                if (isPaused) {
-                    isPaused = false;
+                if (settings.isPaused) {
+                    settings.isPaused = false;
                 } else {
-                    isPaused = true;
+                    settings.isPaused = true;
                 }
             }
 
             ImGui::SameLine();
 
             if (ImGui::Button("Reset", ImVec2(tabWidth, 40))) {
-                groundYMeters = groundYPixels / pixelsPerMeter;
-                mainMass.setHeight(groundYMeters - height);
+                groundYMeters = groundYPixels / settings.pixelsPerMeter;
+                mainMass.setHeight(groundYMeters - settings.height);
                 mainMass.setVelocity(sf::Vector2f(0, 0));
             }
 
@@ -145,39 +136,39 @@ void sceneOne() {
                                         ImGuiWindowFlags_NoBringToFrontOnFocus;
 
         if (ImGui::Begin("Sidebar", nullptr, sidebarFlags)) {
-            if (sidebarMode == 0) {
+            if (settings.sidebarMode == 0) {
                 ImGui::PushFont(headerOneFont);
                 ImGui::Text("Telemetry");
                 ImGui::PopFont();
             }
-            if (sidebarMode == 1) {
+            if (settings.sidebarMode == 1) {
 
                 ImGui::PushFont(headerOneFont);
                 ImGui::Text("Settings");
                 ImGui::PopFont();
 
-                if (ImGui::CollapsingHeader("Environment")) {
+                if (ImGui::CollapsingHeader("Environment", ImGuiTreeNodeFlags_DefaultOpen)) {
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    if (ImGui::DragFloat("Gravity (m/s_2)", &gravity, 0.01f, 0.0f, 20.0f, "%.2f")) {
-                        gravityForce.y = gravity * mainMass.getMass();
+                    if (ImGui::DragFloat("Gravity (m/s_2)", &settings.gravity, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        gravityForce.y = settings.gravity * mainMass.getMass();
                     }
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    ImGui::DragFloat("Air Density (m/s_2)", &airDensity, 0.01f, 0.0f, 20.0f, "%.2f");
+                    ImGui::DragFloat("Air Density (m/s_2)", &settings.airDensity, 0.01f, 0.0f, 20.0f, "%.2f");
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    if (ImGui::DragFloat("Height (m)", &height, 0.01f, 0.0f, 20.0f, "%.2f")) {
-                        groundYMeters = groundYPixels / pixelsPerMeter;
-                        mainMass.setHeight(groundYMeters - height);
+                    if (ImGui::DragFloat("Height (m)", &settings.height, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        groundYMeters = groundYPixels / settings.pixelsPerMeter;
+                        mainMass.setHeight(groundYMeters - settings.height);
                     }
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
-                    if (ImGui::DragFloat("Ground Restitution", &groundRestitution, 0.01f, 0.0f, 20.0f, "%.2f")) {
-                        totalRestitution = massRestitution * groundRestitution;
+                    if (ImGui::DragFloat("Ground Restitution", &settings.groundRestitution, 0.01f, 0.0f, 20.0f, "%.2f")) {
+                        totalRestitution = massRestitution * settings.groundRestitution;
                     }
                 }
-                if (ImGui::CollapsingHeader("Object Properties")) {
+                if (ImGui::CollapsingHeader("Object Properties", ImGuiTreeNodeFlags_DefaultOpen)) {
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     if (ImGui::DragFloat("Mass (g)", &massSize, 0.01f, 0.0f, 20.0f, "%.2f")) {
                         mainMass.setMass(massSize);
-                        gravityForce.y = gravity * massSize;
+                        gravityForce.y = settings.gravity * massSize;
                     }
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     if (ImGui::DragFloat("Radius (m)", &radius, 0.01f, 0.0f, 20.0f, "%.2f")) {
@@ -185,10 +176,10 @@ void sceneOne() {
                     }
                     ImGui::SetNextItemWidth(sidebarInputFieldWidth);
                     if (ImGui::DragFloat("Mass Restitution", &massRestitution, 0.01f, 0.0f, 20.0f, "%.2f")) {
-                        totalRestitution = massRestitution * groundRestitution;
+                        totalRestitution = massRestitution * settings.groundRestitution;
                     }
                 }
-                if (ImGui::CollapsingHeader("Visualization")) {
+                if (ImGui::CollapsingHeader("Visualization", ImGuiTreeNodeFlags_DefaultOpen)) {
                 }
             }
         }
@@ -210,10 +201,10 @@ void sceneOne() {
 
         if (ImGui::Begin("SidebarTabs", nullptr, tabFlags)) {
             if (ImGui::Button("T", ImVec2(tabWidth, 40))) {
-                sidebarMode = 0;
+                settings.sidebarMode = 0;
             }
             if (ImGui::Button("S", ImVec2(tabWidth, 40))) {
-                sidebarMode = 1;
+                settings.sidebarMode = 1;
             }
 
             ImGui::End();
@@ -230,9 +221,9 @@ void sceneOne() {
 
         mainMass.draw(window);
 
-        if (!isPaused) {
+        if (!settings.isPaused) {
             mainMass.applyForce(gravityForce);
-            mainMass.applyForce(mainMass.calculateDragForce(airDensity));
+            mainMass.applyForce(mainMass.calculateDragForce(settings.airDensity));
             mainMass.update(frameTime);
             mainMass.handleGroundCollision(ground[0].position.y / 50.0f, totalRestitution);
         }
