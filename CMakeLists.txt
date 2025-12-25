@@ -27,7 +27,7 @@ target_compile_options(physics_playground PRIVATE
 )
 
 # Enable static linking for clean distribution
-set(SFML_STATIC_LIBRARIES TRUE)
+set(SFML_STATIC_LIBRARIES FALSE)
 find_package(SFML 3 COMPONENTS System Window Graphics REQUIRED)
 
 find_package(imgui CONFIG REQUIRED)

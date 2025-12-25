@@ -69,7 +69,11 @@ help:
 # Build the project using CMake with the specified BUILD_TYPE
 # Creates build directory and compiles with parallel processing
 build:
+ifeq ($(OS),Windows_NT)
 	$(CMAKE) -B build -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
+else
+	$(CMAKE) -B build -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DCMAKE_TOOLCHAIN_FILE=$(HOME)/vcpkg/scripts/buildsystems/vcpkg.cmake
+endif
 	$(CMAKE) --build build --config $(BUILD_TYPE) --parallel
 
 # Build the project in Release configuration with optimizations
@@ -80,7 +84,11 @@ release:
 # Build (if needed) and run the executable in Debug mode
 # Fails naturally if executable doesn't exist or build fails
 run: build
+ifeq ($(OS),Windows_NT)
 	"build$(PATHSEP)$(BUILD_TYPE)$(PATHSEP)$(EXE)"
+else
+	./build/$(EXE)
+endif
 
 # Build and run the executable in Release mode
 # Delegates to run target with BUILD_TYPE=Release
