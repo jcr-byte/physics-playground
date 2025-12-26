@@ -18,7 +18,7 @@ add_executable(physics_playground
     src/core/EventHandler.cpp
     src/entities/Mass.cpp
     src/scene/Gravity.cpp
-    $<$<PLATFORM_ID:Windows>:assets/resources.rc>
+    $<$<PLATFORM_ID:Windows>:platform/windows/resources.rc>
 )
 
 target_compile_options(physics_playground PRIVATE
@@ -50,4 +50,24 @@ if(WIN32)
         ws2_32
     )
     target_link_options(physics_playground PRIVATE /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup)
+endif()
+
+# For macOS app bundle
+if(APPLE)
+    set_target_properties(physics_playground PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_BUNDLE_NAME "Physics Playground"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.physicsplayground.app"
+        MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/platform/macos/Info.plist.in"
+    )
+    
+    # Copy assets into the app bundle
+    set(ASSET_DEST "$<TARGET_BUNDLE_CONTENT_DIR:physics_playground>/Resources")
+    add_custom_command(TARGET physics_playground POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${ASSET_DEST}"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/assets" "${ASSET_DEST}"
+        COMMENT "Copying assets to app bundle"
+    )
 endif()

@@ -8,7 +8,7 @@
 # PHONY TARGETS
 # ============================================================================
 # Declare targets that don't create files with the same name
-.PHONY: build run clean release installer help
+.PHONY: build run clean release installer dmg help
 
 # ============================================================================
 # PLATFORM DETECTION AND CONFIGURATION
@@ -17,20 +17,20 @@
 
 ifeq ($(OS),Windows_NT)
     # Windows configuration
-    EXE := physics_playground.exe              # Executable name with .exe extension
+    EXE := physics_playground.exe
     PATHSEP := /
-    RM_BUILD := if exist build rmdir /s /q build 2>nul || rem  # Remove build dir quietly
-    RM_DIST := if exist dist rmdir /s /q dist 2>nul || rem     # Remove dist dir quietly
-    MKDIR_BUILD := if not exist build mkdir build             # Create build dir if needed
-    MKDIR_DIST := if not exist dist mkdir dist                # Create dist dir if needed
+    RM_BUILD := if exist build rmdir /s /q build 2>nul || rem
+    RM_DIST := if exist dist rmdir /s /q dist 2>nul || rem
+    MKDIR_BUILD := if not exist build mkdir build
+    MKDIR_DIST := if not exist dist mkdir dist
 else
     # Unix-like systems (Linux/macOS) configuration
-    EXE := physics_playground                  # Executable name without extension
-    PATHSEP := /                               # Unix path separator
-    RM_BUILD := rm -rf build                   # Force remove build directory
-    RM_DIST := rm -rf dist                     # Force remove dist directory
-    MKDIR_BUILD := mkdir -p build              # Create build dir with parent dirs
-    MKDIR_DIST := mkdir -p dist                # Create dist dir with parent dirs
+    EXE := physics_playground
+    PATHSEP := /
+    RM_BUILD := rm -rf build
+    RM_DIST := rm -rf dist
+    MKDIR_BUILD := mkdir -p build
+    MKDIR_DIST := mkdir -p dist
 endif
 
 # ============================================================================
@@ -60,6 +60,7 @@ help:
 	@echo "  run-release - Build and run in Release mode"
 	@echo "  clean       - Remove build and dist directories"
 	@echo "  installer   - Build installer (Windows only)"
+	@echo "  dmg         - Build DMG disk image (macOS only)"
 	@echo "  help        - Show this help message"
 	@echo ""
 	@echo "Variables:"
@@ -87,7 +88,7 @@ run: build
 ifeq ($(OS),Windows_NT)
 	"build$(PATHSEP)$(BUILD_TYPE)$(PATHSEP)$(EXE)"
 else
-	./build/$(EXE)
+	./build/$(EXE).app/Contents/MacOS/$(EXE)
 endif
 
 # Build and run the executable in Release mode
@@ -110,4 +111,17 @@ clean:
 # Creates installer in dist/ directory
 installer: release
 	$(MKDIR_DIST)
-	$(ISCC) installer.iss
+	$(ISCC) platform/windows/installer.iss
+
+# Build macOS DMG disk image
+# Requires: macOS platform
+# Creates DMG in dist/ directory
+dmg: release
+	$(MKDIR_DIST)
+	@echo "Creating DMG disk image..."
+	rm -f dist/PhysicsPlayground.dmg
+	hdiutil create -volname "Physics Playground" \
+		-srcfolder build/physics_playground.app \
+		-ov -format UDZO \
+		dist/PhysicsPlayground.dmg
+	@echo "DMG created: dist/PhysicsPlayground.dmg"
