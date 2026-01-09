@@ -18,6 +18,7 @@ add_executable(physics_playground
     src/core/EventHandler.cpp
     src/entities/Mass.cpp
     src/scene/Gravity.cpp
+    src/ui/Sidebar.cpp
     $<$<PLATFORM_ID:Windows>:platform/windows/resources.rc>
 )
 

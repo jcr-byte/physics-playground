@@ -2,7 +2,7 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
 
-Mass::Mass(sf::Vector2f position, float mass, float radius) : position(position), mass(mass), radius(radius) {
+Mass::Mass(sf::Vector2f position, float mass, float radius, float restitution) : position(position), mass(mass), radius(radius) {
     float pixelsPerMeter = 50.0f;
     shape.setRadius(radius);
     shape.setOrigin(sf::Vector2f(shape.getRadius(), shape.getRadius()));
@@ -63,6 +63,14 @@ void Mass::setRadius(float newRadius) {
 
 float Mass::getRadius() {
     return radius;
+}
+
+void Mass::setRestitution(float newRestitution) {
+    restitution = newRestitution;
+}
+
+float Mass::getRestitution() {
+    return restitution;
 }
 
 // hardcoded Drag Coefficient for sphere (change later)

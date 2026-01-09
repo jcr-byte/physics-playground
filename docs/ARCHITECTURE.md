@@ -58,6 +58,38 @@ The `EventHandler` class encapsulates SFML event polling, separating input handl
 
 ---
 
+### Sidebar
+
+The `Sidebar` class encapsulates the ImGui-based sidebar UI, separating UI rendering and state from scene logic.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                      Sidebar                        │
+├─────────────────────────────────────────────────────┤
+│  - sidebarMode : int                                │
+│  - width : float                                    │
+│  - tabWidth : float                                 │
+│  - inputFieldWidth : float                          │
+│  - headerOneFont : ImFont*                          │
+│  - headerTwoFont : ImFont*                          │
+├─────────────────────────────────────────────────────┤
+│  + Sidebar() │
+├─────────────────────────────────────────────────────┤
+│  + loadFonts(io: ImGuiIO&) : void                   │
+│  + render(settings: GravitySettings&,               │
+│           mass: Mass&) : void                       │
+├─────────────────────────────────────────────────────┤
+│  - renderTelemetryPanel() : void                    │
+│  - renderSettingsPanel(settings: GravitySettings&,  │
+│                        mass: Mass&) : void          │
+│  - renderTabButtons() : void                        │
+└─────────────────────────────────────────────────────┘
+```
+
+**Location:** `src/ui/Sidebar.h`, `src/ui/Sidebar.cpp`
+
+---
+
 ## Project Structure
 
 ```
@@ -68,7 +100,13 @@ src/
 ├── entities/           # Physics objects
 │   ├── Mass.h
 │   └── Mass.cpp
-└── main.cpp            # Entry point and game loop
+├── scene/              # Scene implementations
+│   ├── Gravity.h
+│   └── Gravity.cpp
+├── ui/                 # UI components
+│   ├── Sidebar.h
+│   └── Sidebar.cpp
+└── main.cpp            # Entry point
 ```
 
 ---
