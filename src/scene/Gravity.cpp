@@ -135,33 +135,6 @@ void sceneOne() {
             settings.isDirty = false;
         }
 
-        // setup sidebar buttons Ui
-        ImGui::SetNextWindowPos(ImVec2(sidebarPos - tabWidth, 0));
-        ImGui::SetNextWindowSize(ImVec2(tabWidth, 200.0f));
-
-        ImGuiWindowFlags tabFlags = ImGuiWindowFlags_NoDecoration | 
-                                    ImGuiWindowFlags_NoMove | 
-                                    ImGuiWindowFlags_NoResize | 
-                                    ImGuiWindowFlags_NoSavedSettings |
-                                    ImGuiWindowFlags_AlwaysAutoResize;
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
-
-        if (ImGui::Begin("SidebarTabs", nullptr, tabFlags)) {
-            if (ImGui::Button("T", ImVec2(tabWidth, 40))) {
-                settings.simulation.sidebarMode = 0;
-            }
-            if (ImGui::Button("S", ImVec2(tabWidth, 40))) {
-                settings.simulation.sidebarMode = 1;
-            }
-
-            ImGui::End();
-        }
-
-        ImGui::PopStyleColor();
-        ImGui::PopStyleVar();
-
         ground[0].position = sf::Vector2f(0.f, groundYPixels);
         ground[1].position = sf::Vector2f(sceneWidth, groundYPixels);
 

@@ -57,6 +57,34 @@ void Sidebar::renderSettingsPanel(SceneSettings& settings) {
     }
 }
 
+void Sidebar::renderTabButtons(float sidebarPosX, SceneSettings& settings) {
+    ImGui::SetNextWindowPos(ImVec2(sidebarPosX - tabWidth, 0));
+    ImGui::SetNextWindowSize(ImVec2(tabWidth, 200.0f));
+
+    ImGuiWindowFlags tabFlags = ImGuiWindowFlags_NoDecoration | 
+                                ImGuiWindowFlags_NoMove | 
+                                ImGuiWindowFlags_NoResize | 
+                                ImGuiWindowFlags_NoSavedSettings |
+                                ImGuiWindowFlags_AlwaysAutoResize;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
+
+    if (ImGui::Begin("SidebarTabs", nullptr, tabFlags)) {
+        if (ImGui::Button("T", ImVec2(tabWidth, 40))) {
+            settings.simulation.sidebarMode = 0;
+        }
+        if (ImGui::Button("S", ImVec2(tabWidth, 40))) {
+            settings.simulation.sidebarMode = 1;
+        }
+
+        ImGui::End();
+    }
+
+    ImGui::PopStyleColor();
+    ImGui::PopStyleVar();
+}
+
 void Sidebar::loadFonts(ImGuiIO& io) {
     this->headerOneFont = io.Fonts->AddFontFromFileTTF("assets/fonts/CONSOLAB.ttf", 20.0f);
     this->headerTwoFont = io.Fonts->AddFontFromFileTTF("assets/fonts/CONSOLA.ttf", 18.0f);
@@ -69,6 +97,8 @@ void Sidebar::render(SceneSettings& settings) {
         viewport->WorkPos.x + viewport->WorkSize.x - width,
         viewport->WorkPos.y
     );
+
+    renderTabButtons(sidebarPos.x, settings);
 
     ImGui::SetNextWindowPos(sidebarPos);
     ImGui::SetNextWindowSize(ImVec2(width, viewport->WorkSize.y));

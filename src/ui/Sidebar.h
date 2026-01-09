@@ -17,6 +17,7 @@ private:
 
     void renderTelemetryPanel();
     void renderSettingsPanel(SceneSettings& settings);
+    void renderTabButtons(float sidebarPosX, SceneSettings& settings);
 public:
     Sidebar();
     void loadFonts(ImGuiIO& io);
